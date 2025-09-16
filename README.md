@@ -1,4 +1,3 @@
-```markdown
 # GestaltMatcher MCP Server
 
 This project provides an **MCP (Model Context Protocol)** wrapper for the **GestaltMatcher REST API**.  
