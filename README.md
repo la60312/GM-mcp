@@ -5,11 +5,30 @@ It uses `awslabs.openapi-mcp-server` (OpenAPI → MCP mapper) together with `mcp
 
 ---
 
+## 🚀 Quickstart (3 commands)
+
+```bash
+# 1. Run the GestaltMatcher API on port 5001
+docker run -p 5001:5000 --name gm-api gm-api
+
+# 2. Run the MCP bridge container
+docker run --rm -p 18080:18080 --name gm-openapi-mcp \
+  -e GM_API_BASE_URL="http://host.docker.internal:5001" \
+  -e GM_API_USERNAME="bh25" \
+  -e GM_API_PASSWORD="gestaltmatcher" \
+  -e API_SPEC_URL="http://host.docker.internal:5001/openapi.json" \
+  gm-openapi-mcp
+
+# 3. Test the MCP endpoint (should return 200 OK)
+curl -i http://127.0.0.1:18080/mcp
+````
+
+---
+
 ## Architecture
 
 ```
-
-\[MCP Client / Inspector]
+[MCP Client / Inspector]
 │  (Streamable HTTP or SSE)
 ▼
 mcp-proxy  (HTTP/SSE bridge)
@@ -19,20 +38,20 @@ awslabs.openapi-mcp-server (reads FastAPI OpenAPI spec, calls GM API)
 │  (HTTP + Basic Auth)
 ▼
 GestaltMatcher API (FastAPI)
-
-````
+```
 
 ---
 
 ## Prerequisites
 
-- **Docker** installed
-- A running **GestaltMatcher API** container, published on your host at port **5001**. For example:
+* **Docker** installed
+* A running **GestaltMatcher API** container, published on your host at port **5001**. For example:
+
   ```bash
   docker run -p 5001:5000 --name gm-api gm-api
-````
+  ```
 
-* **GM API credentials** (defined in `config.json` inside the API container). Example:
+- **GM API credentials** (defined in `config.json` inside the API container). Example:
 
   * **Username:** `bh25`
   * **Password:** `gestaltmatcher`
@@ -196,6 +215,7 @@ Interactively explore and call the MCP tools.
      ```json
      {"status": "running"}
      ```
+
    * `predict`, `encode`, `crop` expect a JSON object with an `img` field containing a **base64** image (PNG/JPEG).
 
    Generate base64 from a PNG (no newlines):
@@ -325,11 +345,6 @@ docker compose up --build
 
 ## License
 
-MIT (or your preferred license)
+MIT
 
-```
 
----
-
-Would you like me to also add a **Quickstart TL;DR** (just 3 commands: run gm-api → run MCP → test `/status`) at the very top so new users don’t have to scroll?
-```
